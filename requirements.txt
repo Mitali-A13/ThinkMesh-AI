@@ -1,43 +1,36 @@
-# Core LLM + LangChain ecosystem
+# API / App
+fastapi>=0.115.0
+uvicorn[standard]>=0.30.0
+streamlit>=1.34.0
+
+# Core LLM + LangChain
 langchain>=0.2.0
 langchain-core>=0.2.0
 langchain-community>=0.2.0
-langchain-mistralai>=0.1.8
 
-# Mistral API SDK
+# Gemini
+langchain-google-genai>=1.0.3
+google-generativeai>=0.5.4
+
+# Optional old mistral
+langchain-mistralai>=0.1.8
 mistralai>=1.0.0
 
-# Tavily Search Tool
+# Search / Tools
 tavily-python>=0.3.0
 
 # Web scraping
 beautifulsoup4>=4.12.0
 requests>=2.31.0
 lxml>=5.0.0
-
-# Environment variables
-python-dotenv>=1.0.0
-
-# Async support (important for agents/tools)
-aiohttp>=3.9.0
-
-# Data handling (optional but useful in pipelines)
-pandas>=2.0.0
-
-# Token counting / text utils
-tiktoken>=0.6.0
-
-# Logging / debugging
-rich>=13.7.0
-
-# Retry + robustness
-tenacity>=8.2.0
-
-# Fast JSON handling
-orjson>=3.9.0
-
-# Typing / schemas
-pydantic>=2.5.0
-
-# Optional (advanced parsing / HTML cleanup)
 html5lib>=1.1
+
+# Utilities
+python-dotenv>=1.0.0
+aiohttp>=3.9.0
+pandas>=2.0.0
+tiktoken>=0.6.0
+rich>=13.7.0
+tenacity>=8.2.0
+orjson>=3.9.0
+pydantic>=2.5.0

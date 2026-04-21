@@ -8,7 +8,7 @@ from custom_tools import web_search, scrape_url
 load_dotenv()
 
 # MODEL SETUP
-llm = ChatMistralAI(model="magistral-small-2509", temperature=0)
+llm = ChatMistralAI(model="mistral-small-2603", temperature=0)
 
 
 # SEARCH AGENT

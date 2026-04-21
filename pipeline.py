@@ -1,5 +1,10 @@
 from dotenv import load_dotenv
-from agents import build_search_agent, build_reader_agent, writer_chain, critic_chain
+from agents import (
+    build_search_agent,
+    build_reader_agent,
+    writer_chain,
+    critic_chain,
+)
 
 load_dotenv()
 
