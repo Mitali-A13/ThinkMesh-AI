@@ -51,7 +51,19 @@ def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(securit
     if payload is None:
         raise HTTPException(status_code=401, detail="Invalid or expired token")
 
+    if "user_id" not in payload:
+        raise HTTPException(status_code=401, detail="Invalid token payload")
+
     return payload
+
+
+def get_db_user(current_user: dict, db: Session):
+    user = db.query(User).filter(User.id == current_user["user_id"]).first()
+
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    return user
 
 
 # PYDANTIC SCHEMAS
@@ -119,6 +131,9 @@ class SingleHistoryResponse(BaseModel):
     history: HistoryDetailItem
 
 
+# user
+
+
 # ROUTES
 # Health check
 @app.get("/", status_code=status.HTTP_200_OK)
@@ -156,6 +171,7 @@ def login(data: LoginRequest, db: Session = Depends(get_db)):
         raise HTTPException(status_code=400, detail="Invalid credentials.")
     if not verify_password(data.password, user.hashed_password):
         raise HTTPException(status_code=400, detail="Invalid credentials.")
+    # CHANGED
     token = create_access_token({"sub": user.email, "user_id": user.id})
     return {"success": True, "access_token": token, "token_type": "bearer"}
 
@@ -176,7 +192,7 @@ def research(
             raise HTTPException(status_code=500, detail=result["error"])
 
         # Get current DB user
-        user = db.query(User).filter(User.email == current_user["sub"]).first()
+        user = get_db_user(current_user, db)
 
         # Save chat history
         new_history = ChatHistory(
@@ -201,7 +217,7 @@ def research(
 def get_history(
     current_user: dict = Depends(get_current_user), db: Session = Depends(get_db)
 ):
-    user = db.query(User).filter(User.email == current_user["sub"]).first()
+    user = get_db_user(current_user, db)
 
     history = (
         db.query(ChatHistory)
@@ -231,7 +247,8 @@ def get_single_history(
     current_user: dict = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
-    user = db.query(User).filter(User.email == current_user["sub"]).first()
+    # CHANGED
+    user = get_db_user(current_user, db)
 
     item = (
         db.query(ChatHistory)
