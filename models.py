@@ -1,5 +1,6 @@
-from sqlalchemy import Column, Integer, String, ForeignKey, Text
+from sqlalchemy import Column, Integer, String, ForeignKey, Text, DateTime
 from database import Base
+from datetime import datetime
 
 
 class User(Base):
@@ -26,3 +27,7 @@ class ChatHistory(Base):
     report = Column(Text, nullable=False)
 
     feedback = Column(Text, nullable=True)
+
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)

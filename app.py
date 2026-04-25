@@ -94,6 +94,31 @@ class MessageResponse(BaseModel):
     message: str
 
 
+# history
+class HistoryItem(BaseModel):
+    id: int
+    topic: str
+    created_at: str
+
+
+class HistoryResponse(BaseModel):
+    success: bool
+    history: list[HistoryItem]
+
+
+class HistoryDetailItem(BaseModel):
+    id: int
+    topic: str
+    report: str
+    feedback: str | None = None
+    created_at: str
+
+
+class SingleHistoryResponse(BaseModel):
+    success: bool
+    history: HistoryDetailItem
+
+
 # ROUTES
 # Health check
 @app.get("/", status_code=status.HTTP_200_OK)
@@ -163,6 +188,7 @@ def research(
 
         db.add(new_history)
         db.commit()
+        db.refresh(new_history)
 
         return {"success": True, "data": result}
 
@@ -177,7 +203,12 @@ def get_history(
 ):
     user = db.query(User).filter(User.email == current_user["sub"]).first()
 
-    history = db.query(ChatHistory).filter(ChatHistory.user_id == user.id).all()
+    history = (
+        db.query(ChatHistory)
+        .filter(ChatHistory.user_id == user.id)
+        .order_by(ChatHistory.created_at.desc())
+        .all()
+    )
 
     output = []
 
@@ -186,9 +217,38 @@ def get_history(
             {
                 "id": item.id,
                 "topic": item.topic,
-                "report": item.report,
-                "feedback": item.feedback,
+                "created_at": item.created_at.isoformat(),
             }
         )
 
     return {"success": True, "history": output}
+
+
+# route to fetch a single report using id
+@app.get("/history/{history_id}", response_model=SingleHistoryResponse)
+def get_single_history(
+    history_id: int,
+    current_user: dict = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    user = db.query(User).filter(User.email == current_user["sub"]).first()
+
+    item = (
+        db.query(ChatHistory)
+        .filter(ChatHistory.id == history_id, ChatHistory.user_id == user.id)
+        .first()
+    )
+
+    if not item:
+        raise HTTPException(status_code=404, detail="History item not found.")
+
+    return {
+        "success": True,
+        "history": {
+            "id": item.id,
+            "topic": item.topic,
+            "report": item.report,
+            "feedback": item.feedback,
+            "created_at": item.created_at.isoformat(),
+        },
+    }
