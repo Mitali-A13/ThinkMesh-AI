@@ -1,18 +1,28 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+  useLocation,
+} from "react-router-dom";
+
+import { AnimatePresence } from "framer-motion";
 
 import LoginPage from "./pages/LoginPage";
 import SignupPage from "./pages/SignupPage";
 import DashboardPage from "./pages/DashboardPage";
+import SettingsPage from "./pages/SettingsPage";
 import NotFoundPage from "./pages/NotFoundPage";
 import ProtectedRoute from "./routes/ProtectedRoute";
-import SettingsPage from "./pages/SettingsPage";
 
-function App() {
+function AnimatedRoutes() {
+  const location = useLocation();
+
   return (
-    <BrowserRouter>
-      <Routes>
+    <AnimatePresence mode="wait">
+      <Routes location={location} key={location.pathname}>
         <Route path="/" element={<LoginPage />} />
         <Route path="/signup" element={<SignupPage />} />
+
         <Route
           path="/dashboard"
           element={
@@ -21,11 +31,22 @@ function App() {
             </ProtectedRoute>
           }
         />
+
+        <Route
+          path="/settings"
+          element={<SettingsPage />}
+        />
+
         <Route path="*" element={<NotFoundPage />} />
-        <Route path="/settings" element={<SettingsPage />} />
       </Routes>
-    </BrowserRouter>
+    </AnimatePresence>
   );
 }
 
-export default App;
+export default function App() {
+  return (
+    <BrowserRouter>
+      <AnimatedRoutes />
+    </BrowserRouter>
+  );
+}
