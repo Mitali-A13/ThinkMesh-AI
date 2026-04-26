@@ -69,7 +69,7 @@ def get_me(
 
 # change password route
 # NEW
-@router.post("/change-password", response_model=MessageResponse)
+@router.put("/change-password", response_model=MessageResponse)
 def change_password(
     data: ChangePasswordRequest,
     current_user: dict = Depends(get_current_user),
