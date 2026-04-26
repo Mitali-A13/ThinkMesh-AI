@@ -1,5 +1,5 @@
 from dotenv import load_dotenv
-from agents import (
+from backend.agents import (
     build_search_agent,
     build_reader_agent,
     writer_chain,

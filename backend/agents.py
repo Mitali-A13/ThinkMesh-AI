@@ -3,7 +3,7 @@ from langchain.agents import create_agent
 from langchain_mistralai import ChatMistralAI
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
-from custom_tools import web_search, scrape_url
+from backend.custom_tools import web_search, scrape_url
 
 load_dotenv()
 
